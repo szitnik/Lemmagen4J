@@ -1,4 +1,4 @@
-﻿package si.zitnik.research.lemmagen.impl;
+package si.zitnik.research.lemmagen.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,144 +10,144 @@ import java.util.List;
 
 
 public class ExampleList implements Serializable {
-	private static final long serialVersionUID = 7360348115142636711L;
-	
-	private LemmatizerSettings lsett;
-	private RuleList rlRules;
-	private HashMap<String, LemmaExample> dictExamples;
-	private ArrayList<LemmaExample> lstExamples;
+    private static final long serialVersionUID = 7360348115142636711L;
 
-	public ExampleList(LemmatizerSettings lsett) {
-		this.lsett = lsett;
+    private LemmatizerSettings lsett;
+    private RuleList rlRules;
+    private HashMap<String, LemmaExample> dictExamples;
+    private ArrayList<LemmaExample> lstExamples;
 
-		this.dictExamples = new HashMap<String, LemmaExample>();
-		this.lstExamples = null;
-		this.rlRules = new RuleList(lsett);
-	}
-	
-	public ExampleList(BufferedReader srIn, String sFormat, LemmatizerSettings lsett) throws NumberFormatException, IOException {
-		this(lsett);
-		AddMultextFile(srIn, sFormat);
-	}
+    public ExampleList(LemmatizerSettings lsett) {
+        this.lsett = lsett;
 
-	public LemmaExample getExampleAt(int i) {
-			if (lstExamples == null) FinalizeAdditions();
-			return lstExamples.get(i);
-	}
-	public int getCount() {
-			if (lstExamples == null) FinalizeAdditions();
-			return lstExamples.size();
-	}
-	public double getWeightSum() {
-			if (lstExamples == null) FinalizeAdditions();
+        this.dictExamples = new HashMap<String, LemmaExample>();
+        this.lstExamples = null;
+        this.rlRules = new RuleList(lsett);
+    }
 
-			double dWeight = 0;
+    public ExampleList(BufferedReader srIn, String sFormat, LemmatizerSettings lsett) throws NumberFormatException, IOException {
+        this(lsett);
+        AddMultextFile(srIn, sFormat);
+    }
 
-			for (LemmaExample exm : lstExamples)
-			dWeight += exm.getWeight();
+    public LemmaExample getExampleAt(int i) {
+        if (lstExamples == null) FinalizeAdditions();
+        return lstExamples.get(i);
+    }
+    public int getCount() {
+        if (lstExamples == null) FinalizeAdditions();
+        return lstExamples.size();
+    }
+    public double getWeightSum() {
+        if (lstExamples == null) FinalizeAdditions();
 
-			return dWeight;
-	}
-	public RuleList getRules() {
-			return rlRules;
-	}
-	public List<LemmaExample> getListExamples() {
-			if (lstExamples == null) FinalizeAdditions();
-			return lstExamples;
-	}
+        double dWeight = 0;
 
-	public void AddMultextFile(BufferedReader srIn, String sFormat) throws NumberFormatException, IOException {
-		//read from file
-		String sLine = null;
-		int iError = 0;
-		int iLine = 0;
+        for (LemmaExample exm : lstExamples)
+            dWeight += exm.getWeight();
 
-		int iW = sFormat.indexOf('W');
-		int iL = sFormat.indexOf('L');
-		int iM = sFormat.indexOf('M');
-		int iF = sFormat.indexOf('F');
-		int iLen = Math.max(Math.max(iW, iL), Math.max(iM, iF))+1;
+        return dWeight;
+    }
+    public RuleList getRules() {
+        return rlRules;
+    }
+    public List<LemmaExample> getListExamples() {
+        if (lstExamples == null) FinalizeAdditions();
+        return lstExamples;
+    }
 
-		if (iW < 0 || iL < 0) {
-			System.out.println("  Can not find word and lemma location in the format specification");
-			return;
-		}
+    public void AddMultextFile(BufferedReader srIn, String sFormat) throws NumberFormatException, IOException {
+        //read from file
+        String sLine = null;
+        int iError = 0;
+        int iLine = 0;
 
-		while ((sLine = srIn.readLine()) != null && iError < 50) {
-			iLine++;
+        int iW = sFormat.indexOf('W');
+        int iL = sFormat.indexOf('L');
+        int iM = sFormat.indexOf('M');
+        int iF = sFormat.indexOf('F');
+        int iLen = Math.max(Math.max(iW, iL), Math.max(iM, iF))+1;
 
-			String[] asWords = sLine.split("\t");
-			if (asWords.length < iLen) {
-				System.out.println("  ERROR: Line doesn't confirm to the given format \"" + sFormat + "\"! Line " + iLine + ".");
-				iError++;
-				continue;
-			}
+        if (iW < 0 || iL < 0) {
+            System.out.println("  Can not find word and lemma location in the format specification");
+            return;
+        }
 
-			String sWord = asWords[iW];
-			String sLemma = asWords[iL];
-			if (sLemma == "=") sLemma = sWord;
-			String sMsd = null;
-			if (iM > -1) sMsd = asWords[iM];
-			double dWeight = 1; ;
-			if (iF > -1)
-				dWeight = Double.parseDouble(asWords[iM]);
+        while ((sLine = srIn.readLine()) != null && iError < 50) {
+            iLine++;
 
-			AddExample(sWord, sLemma, dWeight, sMsd);
-		}
-		if (iError == 50) System.out.println("  Parsing stopped because of too many (50) errors. Check format specification");
-	}
-	public LemmaExample AddExample(String sWord, String sLemma, double dWeight, String sMsd) {
-		String sNewMsd = lsett.eMsdConsider != MsdConsideration.Ignore ? sMsd : null;
-		LemmaExample leNew = new LemmaExample(sWord, sLemma, dWeight, sNewMsd, rlRules, lsett);
-		return Add(leNew);
-	}
+            String[] asWords = sLine.split("\t");
+            if (asWords.length < iLen) {
+                System.out.println("  ERROR: Line doesn't confirm to the given format \"" + sFormat + "\"! Line " + iLine + ".");
+                iError++;
+                continue;
+            }
 
-	private LemmaExample Add(LemmaExample leNew) {
-		//TODO: is this ok rewritten???
+            String sWord = asWords[iW];
+            String sLemma = asWords[iL];
+            if (sLemma == "=") sLemma = sWord;
+            String sMsd = null;
+            if (iM > -1) sMsd = asWords[iM];
+            double dWeight = 1; ;
+            if (iF > -1)
+                dWeight = Double.parseDouble(asWords[iM]);
 
-		if (!dictExamples.containsKey(leNew.getSignature())) {
-			dictExamples.put(leNew.getSignature(), leNew);
-		}
+            AddExample(sWord, sLemma, dWeight, sMsd);
+        }
+        if (iError == 50) System.out.println("  Parsing stopped because of too many (50) errors. Check format specification");
+    }
+    public LemmaExample AddExample(String sWord, String sLemma, double dWeight, String sMsd) {
+        String sNewMsd = lsett.eMsdConsider != MsdConsideration.Ignore ? sMsd : null;
+        LemmaExample leNew = new LemmaExample(sWord, sLemma, dWeight, sNewMsd, rlRules, lsett);
+        return Add(leNew);
+    }
+
+    private LemmaExample Add(LemmaExample leNew) {
+        //TODO: is this ok rewritten???
+
+        if (!dictExamples.containsKey(leNew.getSignature())) {
+            dictExamples.put(leNew.getSignature(), leNew);
+        }
 
 
-		lstExamples = null;
+        lstExamples = null;
 
-		return leNew;
-	}
-	public void DropExamples() {
-		dictExamples.clear();
-		lstExamples = null;
-	}
-	public void FinalizeAdditions() {
-		if (lstExamples != null) return;
-		lstExamples = new ArrayList<LemmaExample>(dictExamples.values());
-		Collections.sort(lstExamples);
-	}
+        return leNew;
+    }
+    public void DropExamples() {
+        dictExamples.clear();
+        lstExamples = null;
+    }
+    public void FinalizeAdditions() {
+        if (lstExamples != null) return;
+        lstExamples = new ArrayList<LemmaExample>(dictExamples.values());
+        Collections.sort(lstExamples);
+    }
 
-	public ExampleList GetFrontRearExampleList(Boolean front) {
-		ExampleList elExamplesNew = new ExampleList(lsett);
+    public ExampleList GetFrontRearExampleList(Boolean front) {
+        ExampleList elExamplesNew = new ExampleList(lsett);
 
-		for (LemmaExample le : this.getListExamples()) {
-			if (front)
-				elExamplesNew.AddExample(le.getWordFront(), le.getLemmaFront(), le.getWeight(), le.getMsd());
-			else
-				elExamplesNew.AddExample(le.getWordRear(), le.getLemmaRear(), le.getWeight(), le.getMsd());
-		}
-		elExamplesNew.FinalizeAdditions();
+        for (LemmaExample le : this.getListExamples()) {
+            if (front)
+                elExamplesNew.AddExample(le.getWordFront(), le.getLemmaFront(), le.getWeight(), le.getMsd());
+            else
+                elExamplesNew.AddExample(le.getWordRear(), le.getLemmaRear(), le.getWeight(), le.getMsd());
+        }
+        elExamplesNew.FinalizeAdditions();
 
-		return elExamplesNew;
-	}
+        return elExamplesNew;
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
 
-		for (LemmaExample exm : lstExamples) {
-			sb.append(exm.toString()+System.getProperty("line.separator"));
-		}
+        for (LemmaExample exm : lstExamples) {
+            sb.append(exm.toString()+System.getProperty("line.separator"));
+        }
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
 
 

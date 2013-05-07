@@ -19,7 +19,7 @@ public class Train {
 		settings.bUseFromInRules = false;
 		settings.eMsdConsider = MsdConsideration.Ignore;
 		settings.iMaxRulesPerNode = 0;
-		settings.bBuildFrontLemmatizer = true;
+		settings.bBuildFrontLemmatizer = false;
 		
 		System.out.println("Building model...");
 		Lemmatizer lm = new Lemmatizer(br, format, settings);
@@ -27,7 +27,7 @@ public class Train {
 		lm.DropExamples(); //to save space - we do not need examples as we have built model
 		System.out.println("Model built");
 		System.out.println("Saving model...");
-		//LemmagenFactory.saveObject(lm, outputModelFilename);
+		LemmagenFactory.saveObject(lm, outputModelFilename);
 		System.out.println("Model saved.");
 	}
 }

@@ -1,7 +1,7 @@
-﻿package si.zitnik.research.lemmagen.abst;
+package si.zitnik.research.lemmagen.abst;
 
 
 public interface ILemmatizerModel {
-	String Lemmatize(String sWord);
+    String Lemmatize(String sWord);
 }
 

@@ -1,0 +1,19 @@
+﻿Heapsize:
+-Xmx500m
+
+EN Lemmatizer:
+	Loading model...
+	free memory: 80,608, allocated memory: 83,008, max memory: 505,600, total free memory: 503,200 
+	Model loaded.
+	free memory: 84,537, allocated memory: 248,432, max memory: 505,600, total free memory: 341,705 
+	free memory: 171,404, allocated memory: 258,800, max memory: 505,600, total free memory: 418,204
+
+-------------
+
+SLO Lemmatizer:
+
+	Loading model...
+	free memory: 80,608, allocated memory: 83,008, max memory: 505,600, total free memory: 503,200 
+	Model loaded.
+	free memory: 60,269, allocated memory: 505,600, max memory: 505,600, total free memory: 60,269
+	free memory: 325,420, allocated memory: 505,600, max memory: 505,600, total free memory: 325,420 
