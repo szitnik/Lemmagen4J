@@ -85,10 +85,10 @@ public class ExampleList implements Serializable {
 
             String sWord = asWords[iW];
             String sLemma = asWords[iL];
-            if (sLemma == "=") sLemma = sWord;
+            if ("=".equals(sLemma)) sLemma = sWord;
             String sMsd = null;
             if (iM > -1) sMsd = asWords[iM];
-            double dWeight = 1; ;
+            double dWeight = 1;
             if (iF > -1)
                 dWeight = Double.parseDouble(asWords[iM]);
 
