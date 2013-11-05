@@ -217,7 +217,7 @@ public class LemmaExample implements Comparable<LemmaExample>, Serializable {
         return iMaxLen;
     }
 
-    public static LCSREsult LongestCommonSubString(String sStr1, String sStr2) {
+    private static LCSREsult LongestCommonSubString(String sStr1, String sStr2) {
         int[][] l = new int[sStr1.length() + 1][sStr2.length() + 1];
         int z = 0;
         String ret = "";
