@@ -25,11 +25,12 @@ public class RuleList extends HashMap<String, LemmaRule> {
     }
 
     private LemmaRule AddRule(LemmaRule lrRuleNew) {
-        if (!this.containsKey(lrRuleNew.getSignature())) {
+        LemmaRule result = get(lrRuleNew.getSignature());
+        if (result == null) {
             this.put(lrRuleNew.getSignature(), lrRuleNew);
+            result = lrRuleNew;
         }
-
-        return lrRuleNew;
+        return result;
     }
 
 
